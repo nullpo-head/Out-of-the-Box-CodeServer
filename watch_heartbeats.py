@@ -12,10 +12,7 @@ def main():
     argparser.add_argument("-t", "--timeout-min", type=int)
     argparser.add_argument("-a", "--action")
     argparser.add_argument("heartbeats", nargs="+")
-    
     args = argparser.parse_args()
-    if not args.heartbeats:
-        sys.exit(0)
     
     heartbeats = touch_heartbeats(args.heartbeats)
     watch_heartbeats(heartbeats, args.timeout_min)
