@@ -11,12 +11,17 @@ def main():
     argparser = argparse.ArgumentParser("watch_heartbeats")
     argparser.add_argument("-t", "--timeout-min", type=int)
     argparser.add_argument("-a", "--action")
+    argparser.add_argument("-e", "--error-action")
     argparser.add_argument("heartbeats", nargs="+")
     args = argparser.parse_args()
     
     heartbeats = touch_heartbeats(args.heartbeats)
-    watch_heartbeats(heartbeats, args.timeout_min)
-    os.system(args.action)
+    try:
+        watch_heartbeats(heartbeats, args.timeout_min)
+        os.system(args.action)
+    except Exception as e:
+        sys.stderr.write(f"Exception: {e}\n")
+        os.system(args.error_action)
     return
 
 
