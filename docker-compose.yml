@@ -9,12 +9,14 @@ services:
     links:
       - code-server
     environment:
-      DOMAINS: "${CODER_HOST:?Please set CODER_HOS} -> http://code-server:8443"
+      DOMAINS: "user@${CODER_BASICAUTH_PASSWORD:?Please set CODER_BASICAUTH_PASSWORD}:${CODER_HOST:?Please set CODER_HOST} -> http://code-server:8443"
     restart: always
 
   code-server:
     image: linuxserver/code-server
     container_name: code-server
+    env_file:
+      - .env
     environment:
       - PUID=1000
       - PGID=1000
@@ -22,5 +24,5 @@ services:
       - PASSWORD=${CODER_PASSWORD:?Please set CODER_PASSWORD} #optional
       - SUDO_PASSWORD=${CODER_PASSWORD:?Please set CODER_PASSWORD} #optional
     volumes:
-      - ${CODER_CONFIG_DIR:?Please set CODER_CONFIG_DIR}/code-server-config:/config
+      - ${CODER_CONFIG_DIR:?Please set CODER_CONFIG_DIR}:/config
     restart: unless-stopped
