@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+  https-portal:
+    image: steveltn/https-portal:1
+    ports:
+      #- '80:80'
+      - '443:443'
+    links:
+      - code-server
+    environment:
+      DOMAINS: "${CODER_HOST:?Please set CODER_HOS} -> http://code-server:8443"
+    restart: always
+
+  code-server:
+    image: linuxserver/code-server
+    container_name: code-server
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Tokyo
+      - PASSWORD=${CODER_PASSWORD:?Please set CODER_PASSWORD} #optional
+      - SUDO_PASSWORD=${CODER_PASSWORD:?Please set CODER_PASSWORD} #optional
+    volumes:
+      - ${CODER_CONFIG_DIR:?Please set CODER_CONFIG_DIR}/code-server-config:/config
+    restart: unless-stopped
