@@ -8,8 +8,10 @@ services:
       - '443:443'
     links:
       - code-server
+    env_file:
+      - .env
     environment:
-      DOMAINS: "user@${CODER_BASICAUTH_PASSWORD:?Please set CODER_BASICAUTH_PASSWORD}:${CODER_HOST:?Please set CODER_HOST} -> http://code-server:8443"
+      DOMAINS: "user:${CODER_BASICAUTH_PASSWORD:?Please set CODER_BASICAUTH_PASSWORD}@${CODER_HOST:?Please set CODER_HOST} -> http://code-server:8443"
     restart: always
 
   code-server:
@@ -21,10 +23,11 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Asia/Tokyo
-      - PASSWORD=${CODER_PASSWORD:?Please set CODER_PASSWORD} #optional
-      - SUDO_PASSWORD=${CODER_PASSWORD:?Please set CODER_PASSWORD} #optional
+      - PASSWORD=${CODER_PASSWORD:?Please set CODER_PASSWORD}
+      - SUDO_PASSWORD=${CODER_PASSWORD:?Please set CODER_PASSWORD}
     volumes:
-      - ${CODER_CONFIG_DIR:?Please set CODER_CONFIG_DIR}:/config
+      - ${HEARTBEATS_FOLDER:?Please set HEARTBEATS_FOLDER, and touch HEARTBEATS_FOLDER/heartbeat}:/config/.local/share/code-server/heartbeat
+    restart: unless-stopped
 
   heartbeats-watcher:
     build: ./heartbeats_watcher
