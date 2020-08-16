@@ -47,7 +47,7 @@ services:
     container_name: sshbash_heartbeat
     env_file:
       - .env
-    command: sshbash_heartbeat
+    command: /app/heartbeats/sshbash_heartbeat
     volumes:
       - ${HEARTBEATS_FOLDER:?Please set HEARTBEATS_FOLDER}:/app/heartbeats
     pid: "host"

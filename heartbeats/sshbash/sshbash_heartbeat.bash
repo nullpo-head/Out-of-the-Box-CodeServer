@@ -13,7 +13,10 @@ fi
 
 while true; do
   if ( pstree | grep "sshd.*bash" > /dev/null ); then
+    echo "update sshbash_heartbeat"
     touch "$1"
+  else
+    echo "no heartbeat of sshbash_heartbeat"
   fi
   sleep 60
 done
