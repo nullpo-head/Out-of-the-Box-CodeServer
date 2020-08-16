@@ -4,14 +4,16 @@ services:
   https-portal:
     image: steveltn/https-portal:1
     ports:
-      #- '80:80'
+      - '80:80'
       - '443:443'
     links:
       - code-server
     env_file:
       - .env
     environment:
+      WEBSOCKET: "true"
       DOMAINS: "user:${CODER_BASICAUTH_PASSWORD:?Please set CODER_BASICAUTH_PASSWORD}@${CODER_HOST:?Please set CODER_HOST} -> http://code-server:8443"
+      # STAGE: 'production'  # Don't enable this until you test everything works
     restart: always
 
   code-server:
