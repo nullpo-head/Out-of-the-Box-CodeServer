@@ -25,4 +25,24 @@ services:
       - SUDO_PASSWORD=${CODER_PASSWORD:?Please set CODER_PASSWORD} #optional
     volumes:
       - ${CODER_CONFIG_DIR:?Please set CODER_CONFIG_DIR}:/config
+
+  heartbeats-watcher:
+    build: ./heartbeats_watcher
+    container_name: heartbeats_watcher
+    env_file:
+      - .env
+    command: -t "${HEARTBEATS_TIMEOUT:?Please set HEARTBEATS_TIMEOUT}" -a "${HEARTBEATS_ACTION:?Please set HEARTBEATS_ACTION}" /app/heartbeats/heartbeat /app/heartbeats/sshbash_heartbeat
+    volumes:
+      - ${HEARTBEATS_FOLDER:?Please set HEARTBEATS_FOLDER}:/app/heartbeats
+    restart: unless-stopped
+
+  sshbash-heartbeat:
+    build: ./heartbeats/sshbash
+    container_name: sshbash_heartbeat
+    env_file:
+      - .env
+    command: sshbash_heartbeat
+    volumes:
+      - ${HEARTBEATS_FOLDER:?Please set HEARTBEATS_FOLDER}:/app/heartbeats
+    pid: "host"
     restart: unless-stopped

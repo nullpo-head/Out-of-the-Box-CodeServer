@@ -11,7 +11,9 @@ if [[ -z "$1" ]]; then
   exit 1
 fi
 
-while ( pstree | grep "sshd.*bash" > /dev/null ); do
-  touch "$1"
+while true; do
+  if ( pstree | grep "sshd.*bash" > /dev/null ); then
+    touch "$1"
+  fi
   sleep 60
 done
