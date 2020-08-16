@@ -14,6 +14,8 @@ def main():
     argparser.add_argument("-e", "--error-action")
     argparser.add_argument("heartbeats", nargs="+")
     args = argparser.parse_args()
+
+    print(f"watching heartbeats {repr(args.heartbeats)}. timout: {args.timeout_min}, action: {repr(args.action)}, error-action: {repr(args.error_action)}", flush=True)
     
     heartbeats = touch_heartbeats(args.heartbeats)
     try:
