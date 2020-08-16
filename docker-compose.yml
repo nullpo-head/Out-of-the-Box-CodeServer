@@ -37,7 +37,7 @@ services:
     container_name: heartbeats_watcher
     env_file:
       - .env
-    command: -t "${HEARTBEATS_TIMEOUT:?Please set HEARTBEATS_TIMEOUT}" -a "${HEARTBEATS_ACTION:?Please set HEARTBEATS_ACTION}" /app/heartbeats/heartbeat /app/heartbeats/sshbash_heartbeat
+    command: -t "${HEARTBEATS_TIMEOUT:?Please set HEARTBEATS_TIMEOUT}" -a "${HEARTBEATS_ACTION:?Please set HEARTBEATS_ACTION}" -e "${HEARTBEATS_ACTION:?Please set HEARTBEATS_ACTION}" /app/heartbeats/heartbeat /app/heartbeats/sshbash_heartbeat
     volumes:
       - ${HEARTBEATS_FOLDER:?Please set HEARTBEATS_FOLDER}:/app/heartbeats
     restart: unless-stopped
