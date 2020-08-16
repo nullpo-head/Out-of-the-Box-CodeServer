@@ -34,9 +34,9 @@ def touch_heartbeats(heartbeats: List[str]) -> List[Path]:
 
 def watch_heartbeats(heartbeats: List[Path], timeout_min: int) -> Path:
     while True:
-        time.sleep(60)
-        if all([time.time() - heartbeat.lstat().st_mtime >= timeout_min * 60 for heartbeat in heartbeats])
+        if all([time.time() - heartbeat.lstat().st_mtime >= timeout_min * 60 for heartbeat in heartbeats]):
             return
+        time.sleep(60)
 
 
 if __name__ == "__main__":
