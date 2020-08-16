@@ -28,7 +28,8 @@ services:
       - PASSWORD=${CODER_PASSWORD:?Please set CODER_PASSWORD}
       - SUDO_PASSWORD=${CODER_PASSWORD:?Please set CODER_PASSWORD}
     volumes:
-      - ${HEARTBEATS_FOLDER:?Please set HEARTBEATS_FOLDER, and touch HEARTBEATS_FOLDER/heartbeat}:/config/.local/share/code-server/heartbeat
+      - ${CODER_CONFIG_DIR:?Please set CODER_CONFIG_DIR}:/config/.config/code-server
+      - ${HEARTBEATS_FOLDER:?Please set HEARTBEATS_FOLDER}:/config/.local/share/code-server
     restart: unless-stopped
 
   heartbeats-watcher:
