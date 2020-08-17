@@ -7,13 +7,28 @@ services:
       - '80:80'
       - '443:443'
     links:
-      - code-server
+      - oauth2-proxy
     env_file:
       - .env
     environment:
       WEBSOCKET: "true"
-      DOMAINS: "user:${CODER_BASICAUTH_PASSWORD:?Please set CODER_BASICAUTH_PASSWORD}@${CODER_HOST:?Please set CODER_HOST} -> http://code-server:8443"
-      # STAGE: 'production'  # Don't enable this until you test everything works
+      DOMAINS: "${CODER_HOST:?Please set CODER_HOST} -> http://oauth2-proxy:8080"
+      STAGE: 'production'  # Don't set to 'production' this until you test everything works
+    restart: always
+
+  oauth2-proxy:
+    image: quay.io/oauth2-proxy/oauth2-proxy
+    links:
+      - code-server
+    env_file:
+      - .env
+    environment:
+      OAUTH2_PROXY_HTTP_ADDRESS: 0.0.0.0:8080
+      OAUTH2_PROXY_PROVIDER: github
+      OAUTH2_PROXY_AUTHENTICATED_EMAILS_FILE: /config/emails
+      OAUTH2_PROXY_UPSTREAMS: http://code-server:8443/
+    volumes:
+      - ${ALLOWED_EMAILS_LIST:?Please set ALLOWED_EMAILS_LIST}:/config/emails
     restart: always
 
   code-server:
@@ -27,6 +42,8 @@ services:
       - TZ=Asia/Tokyo
       - PASSWORD=${CODER_PASSWORD:?Please set CODER_PASSWORD}
       - SUDO_PASSWORD=${CODER_PASSWORD:?Please set CODER_PASSWORD}
+      - ALLOWHTTP=true
+      - ALLOW-HTTP=true
     volumes:
       - ${CODER_CONFIG_DIR:?Please set CODER_CONFIG_DIR}:/config/.config/code-server
       - ${HEARTBEATS_FOLDER:?Please set HEARTBEATS_FOLDER}:/config/.local/share/code-server
