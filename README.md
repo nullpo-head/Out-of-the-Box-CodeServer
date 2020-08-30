@@ -1,7 +1,6 @@
 # OOTB Code-Server
 
 OOTB Code-Server is an out-of-the-box [Code-Server](https://github.com/cdr/code-server) environment.   
-With OOTB Code-Server, you can set up a Code-Server environment in your cloud to which your iPad or laptop can connect, with little efforts.  
 
 [Code-Server](https://github.com/cdr/code-server) is an OSS product developed by [Coder technologies](https://coder.com/) that allows you to run [VS Code](https://github.com/Microsoft/vscode) on any machine and to access it in the browser.  
 However, to install Code-Server on a server, you have to set up an Https proxy server, an authentication mechanism for security, automatic shutdown if the server is hosted in the cloud, and much more.  
