@@ -1,12 +1,16 @@
 # OOTB Code-Server
 
-OOTB Code-Server is an out-of-the-box Code-Server environment. 
-
+OOTB Code-Server is an out-of-the-box [Code-Server](https://github.com/cdr/code-server) environment.   
 With OOTB Code-Server, you can set up a Code-Server environment in your cloud to which your iPad or laptop can connect, with little efforts.  
+
+[Code-Server](https://github.com/cdr/code-server) is an OSS product developed by [Coder technologies](https://coder.com/) that allows you to run [VS Code](https://github.com/Microsoft/vscode) on any machine and to access it in the browser.  
+However, to install Code-Server on a server, you have to set up an Https proxy server, an authentication mechanism for security, automatic shutdown if the server is hosted in the cloud, and much more.  
+OOTB Code-Server provides these mechanisims with just a few settings.
+
 OOTB Code-Server is equipped with
 
-1. HTTPS powered by Let's Encrypt
-2. Authorization by your GitHub account
+1. HTTPS powered by Let's Encrypt and [https-portal](https://github.com/SteveLTN/https-portal)
+2. Authorization by your GitHub account powered by [OAuth2 Proxy](https://github.com/oauth2-proxy/oauth2-proxy)
 3. Mutable LXC Code-Server container, inside which you can do any mutable things as you usually do in an Ubuntu machine
 4. Automatic deallocation of your VM after 15-minutes idle time (Currently Azure VM is supported)
 
@@ -24,7 +28,7 @@ Please install `docker`, `docker-compose`, and `lxd`. Ubuntu has `lxd` by defaul
 Please clone this repository to a good location
 
 ```bash
-$ git clone https://github.com/nullpo-head/Out-of-Box-CodeServer-Environment.git ~/oob-code-server
+$ git clone https://github.com/nullpo-head/Out-of-Box-CodeServer-Environment.git ~/ootb-code-server
 ```
 
 ### 2. Set up environment variables
@@ -32,7 +36,7 @@ $ git clone https://github.com/nullpo-head/Out-of-Box-CodeServer-Environment.git
 1. Copy `.env.example` to `.env`
 
    ```bash
-   $ cd oob-code-server
+   $ cd ootb-code-server
    $ cp ./helper_containers/.env.example ./helper_containers/.env
    ```
    Pleaes edit `.env` as follows
@@ -42,7 +46,7 @@ $ git clone https://github.com/nullpo-head/Out-of-Box-CodeServer-Environment.git
    Rewrite `CODER_HOST` to your server's DNS name. Let's Encrypt will issue a certificate for this domain.  
    For example, if you use an Azure VM, it has a name like this
    ```
-   CODER_HOST=my-oob-codeserver.japaneast.cloudapp.azure.com
+   CODER_HOST=my-ootb-codeserver.japaneast.cloudapp.azure.com
    ```
 
 3. GitHub Authorization
@@ -53,7 +57,7 @@ $ git clone https://github.com/nullpo-head/Out-of-Box-CodeServer-Environment.git
 
    Put your email address in `emails` file. Only the email address listed here are allowed to login to your Code-Server.
    ```bash
-   $ echo 'your.email.address@example.com' > ~/oob-code-server/emails
+   $ echo 'your.email.address@example.com' > ~/ootb-code-server/emails
    ```
 
 4. **(Optional)** Automatic Deallocation of Your VM (Azure is only supporeted)
@@ -89,14 +93,14 @@ OOTB Code-Server consists of Docker Compose and LXD. So, you can controll contai
 
 You can stop containers
 ```bash
-$ cd ~/oob-code-server/helper_containers
+$ cd ~/ootb-code-server/helper_containers
 $ sudo docker-compose stop  # or `down` to delete containers
-$ lxc stop oob-code-server
+$ lxc stop ootb-code-server
 ```
 
 You can monitor containers by
 ```bash
-$ cd ~/oob-code-server/helper_containers
+$ cd ~/ootb-code-server/helper_containers
 $ sudo docker-compose ps
 CONTAINER ID        IMAGE                               COMMAND               CREATED             STATUS              PORTS                                      NAMES
 7c9806549c66        steveltn/https-portal:1             "/init"               2 hours ago         Up 2 hours          0.0.0.0:80->80/tcp, 0.0.0.0:443->443/tcp   helper_containers_https-portal_1
