@@ -70,6 +70,8 @@ $ git clone https://github.com/nullpo-head/Out-of-Box-CodeServer-Environment.git
 
    You can set `HEARTBEATS_TIMEOUT` to determine how many minutes of idle time the VM will deallocate after. The default minutes is 15.  
    By this configuration, your Azure VM is deallocated after Code-Server is idle for 15 minutes and there is no session of ssh and Bash for 15 minutes.
+   Please note that Code-Server v3.4.1 has a bug that it refreshes its heartbeat even when there is no active conncetions. It will be fixed in v3.5.
+   Because of it, automatic deallocation will not work as expected right now.
 
    Azure VM is only supported right now because the author is an Azure user. Any PRs to support other clouds are welcome.
 
