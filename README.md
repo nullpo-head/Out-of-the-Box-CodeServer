@@ -1,17 +1,19 @@
-# OoB Code-Server
+# OOTB Code-Server
 
-OoB Code-Server is an out-of-box Code-Server environment. With OoB Code-Server, you can set up a Code-Server environment in your cloud to which your iPad or laptop can connect, with little efforts.  
-OoB Code-Server is equipped with
+OOTB Code-Server is an out-of-the-box Code-Server environment. 
+
+With OOTB Code-Server, you can set up a Code-Server environment in your cloud to which your iPad or laptop can connect, with little efforts.  
+OOTB Code-Server is equipped with
 
 1. HTTPS powered by Let's Encrypt
 2. Authorization by your GitHub account
 3. Mutable LXC Code-Server container, inside which you can do any mutable things as you usually do in an Ubuntu machine
 4. Automatic deallocation of your VM after 15-minutes idle time (Currently Azure VM is supported)
 
-OoB Code-Server consists of Docker-Compose containers for immutable components such as Https proxy and GitHub auth proxy,
+OOTB Code-Server consists of Docker-Compose containers for immutable components such as Https proxy and GitHub auth proxy,
 and a LXC container for mutable Code-Server environment.
 
-## Get Started
+## Getting Started
 
 ### 0. Prerequisites
 
@@ -67,7 +69,7 @@ $ git clone https://github.com/nullpo-head/Out-of-Box-CodeServer-Environment.git
 
    You can set `HEARTBEATS_TIMEOUT` to determine how many minutes of idle time the VM will deallocate after. The default minutes is 15.
 
-### 3. Init OoB Code-Server
+### 3. Init OOTB Code-Server
 
 **First**, please make sure that `80` and `443` ports are not used by other web servers.  
 Installtion will fail if they are not available. If it fails, re-run `install.sh` after making those ports available.
@@ -79,11 +81,11 @@ $ ./install.sh
 
 After that, you can access your Code-Server at `https://your-host-name`.
 
-Containers of OoB Code-Server will automatically launch when your server starts.  
+Containers of OOTB Code-Server will automatically launch when your server starts.  
 
 ## Stop / Monitor Container statuses
 
-OoB Code-Server consists of Docker Compose and LXD. So, you can controll containers by `docker-compose` and `lxc`.
+OOTB Code-Server consists of Docker Compose and LXD. So, you can controll containers by `docker-compose` and `lxc`.
 
 You can stop containers
 ```bash
@@ -103,9 +105,9 @@ CONTAINER ID        IMAGE                               COMMAND               CR
 and 
 ```bash
 $ lxc ls
-+-----------------+---------+---------------------+--------+------------+-----------+
-|      NAME       |  STATE  |        IPV4         |  IPV6  |    TYPE    | SNAPSHOTS |
-+-----------------+---------+---------------------+--------+------------+-----------+
-| oob-code-server | RUNNING | 10.238.18.27 (eth0) |        | PERSISTENT | 0         |
-+-----------------+---------+---------------------+--------+------------+-----------+
++------------------+---------+---------------------+--------+------------+-----------+
+|       NAME       |  STATE  |        IPV4         |  IPV6  |    TYPE    | SNAPSHOTS |
++------------------+---------+---------------------+--------+------------+-----------+
+| ootb-code-server | RUNNING | 10.238.18.27 (eth0) |        | PERSISTENT | 0         |
++------------------+---------+---------------------+--------+------------+-----------+
 ```
