@@ -1,7 +1,6 @@
 # OoB Code-Server
 
-OoB Code-Server is an out-of-box Code-Server environment for you.  
-With OoB Code-Server, you can set up a Code-Server environment in your cloud with little efforts to which your iPad or laptop can connect.  
+OoB Code-Server is an out-of-box Code-Server environment. With OoB Code-Server, you can set up a Code-Server environment in your cloud to which your iPad or laptop can connect, with little efforts.  
 OoB Code-Server is equipped with
 
 1. HTTPS powered by Let's Encrypt
@@ -28,18 +27,18 @@ $ git clone https://github.com/nullpo-head/Out-of-Box-CodeServer-Environment.git
 
 ### 2. Set up environment variables
 
-1. Copy .env.example to .env
+1. Copy `.env.example` to `.env`
 
    ```bash
    $ cd oob-code-server
-   $ cp ./helper_containers/.env.example
-   $ cp ./helper_containers/.env
+   $ cp ./helper_containers/.env.example ./helper_containers/.env
    ```
    Pleaes edit `.env` as follows
 
 2. DNS Name
 
-   Rewrite `CODER_HOST` to your server's DNS name. Let's Encrypt will issue a certificate for this domain. For example, if you use an Azure VM, it has a name like this
+   Rewrite `CODER_HOST` to your server's DNS name. Let's Encrypt will issue a certificate for this domain.  
+   For example, if you use an Azure VM, it has a name like this
    ```
    CODER_HOST=my-oob-codeserver.japaneast.cloudapp.azure.com
    ```
@@ -51,7 +50,6 @@ $ git clone https://github.com/nullpo-head/Out-of-Box-CodeServer-Environment.git
    Please fill in `OAUTH2_PROXY_CLIENT_ID` and `OAUTH2_PROXY_CLIENT_SECRET` in `.env` according to the project you created.
 
    Put your email address in `emails` file. Only the email address listed here are allowed to login to your Code-Server.
-
    ```bash
    $ echo 'your.email.address@example.com' > ~/oob-code-server/emails
    ```
@@ -72,18 +70,27 @@ $ git clone https://github.com/nullpo-head/Out-of-Box-CodeServer-Environment.git
 ### 3. Init OoB Code-Server
 
 **First**, please make sure that `80` and `443` ports are not used by other web servers.  
-Installtion will fail if they are not available. If it fails, re-run `install.sh` after making those ports avaialbe.
+Installtion will fail if they are not available. If it fails, re-run `install.sh` after making those ports available.
 
 Run `install.sh`, following the instruction it prompts.
 ```bash
 $ ./install.sh
 ```
 
-After that, you can access your Code-Server by accessing `https://your-host-name`.
+After that, you can access your Code-Server at `https://your-host-name`.
 
-Containers of OoB Code-Server will automatically launch when your server launches.  
+Containers of OoB Code-Server will automatically launch when your server starts.  
 
-## Monitor Container statuses
+## Stop / Monitor Container statuses
+
+OoB Code-Server consists of Docker Compose and LXD. So, you can controll containers by `docker-compose` and `lxc`.
+
+You can stop containers
+```bash
+$ cd ~/oob-code-server/helper_containers
+$ sudo docker-compose stop  # or `down` to delete containers
+$ lxc stop oob-code-server
+```
 
 You can monitor containers by
 ```bash
