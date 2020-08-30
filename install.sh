@@ -65,11 +65,14 @@ else
     info ".env file is found"
 fi
 
-echo_stage "== Checking existing LXC containers for Code-Server =="
+echo_stage "== Checking existing LXD containers for Code-Server =="
 
+info "Querying existing LXD containers"
 if [ -n "$(lxc ls oob-code-server --format=csv)" ]; then
   if prompt_yn "A LXC container named 'oob-code-server' already exists. Do you want to delete it? [y/N]" n; then
+    info "Stopping oob-code-server. This might cause an expected errorfail."
     lxc stop oob-code-server || true
+    info "Deleting oob-code-server"
     lxc delete oob-code-server
     info stopped and deleted the container.
   else
@@ -80,7 +83,7 @@ fi
 
 echo_stage "== Filling some variables in .env =="
 
-sed -i "s;^HEARTBEATS_FOLDER=.*;HEARTBEATS_FOLDER=$(realpath ./heartbeats);" ./helper_containers/.env
+sed -i "s;^HEARTBEATS_FOLDER=.*;HEARTBEATS_FOLDER=$(realpath ./heartbeats_files_placeholder);" ./helper_containers/.env
 touch ./helper_containers/emails
 sed -i "s;^ALLOWED_EMAILS_LIST=.*;ALLOWED_EMAILS_LIST=$(realpath ./helper_containers/emails);" ./helper_containers/.env
 sed -i "s;^OAUTH2_PROXY_COOKIE_SECRET=.*;OAUTH2_PROXY_COOKIE_SECRET=$(head -c 32 /dev/urandom | sha512sum | cut -c1-32);" ./helper_containers/.env
@@ -89,17 +92,15 @@ info done.
 
 echo_stage "== Initializing a LXC container for Code-Server =="
 
-info -n "Please input your user name in the Code-Server container [ubuntu]: "
-read USERNAME
-if [ -z "$USERNAME" ]; then
-    USERNAME=ubuntu
-fi
+USERNAME="$(whoami)"
+UID_="$(id -u)"
+GID="$(id -g)"
 
-if prompt_yn "Do you run 'lxd init'? [Y/n]" y; then
+if prompt_yn "Do you run 'lxd init'? Run it if this is your first time to use LXD. [Y/n]" y; then
     lxd init
 fi
 
-
+info "Creating an Ubuntu:20.04 LXC container"
 lxc init ubuntu:20.04 oob-code-server -p default -c security.nesting=true
 sed "s/%%user%%/$USERNAME/g" ./codeserver/cloud-init.yml | lxc config set oob-code-server user.user-data -
 lxc start oob-code-server
@@ -108,8 +109,18 @@ while ! ( lxc exec oob-code-server -- tail -n50 /var/log/cloud-init-output.log |
     info "waiting for the container getting ready..."
 done
 
-info "Enabling code-server in the container..."
 sleep 2
+
+info "Mounting heartbeats_files_placeholder directory"
+info "To allow for $USERNAME to mount a directory to a LXD container, adding a subuid mapping..."
+set -x
+sudo usermod --add-subuids ${UID_}-${UID_} --add-subgids ${GID}-${GID} root
+set +x
+echo -e "uid $(id -u "$USERNAME") 1000\ngid $(id -g "$USERNAME") 1000" | lxc config set oob-code-server raw.idmap -
+lxc exec oob-code-server -- sudo -u "${USERNAME}" sh -c "mkdir -p /home/$USERNAME/.local/share"
+lxc config device add oob-code-server heartbeats disk source=$(realpath heartbeats_files_placeholder) path="/home/$USERNAME/.local/share/code-server"
+
+info "Enabling code-server in the container..."
 lxc exec oob-code-server -- sudo -u "${USERNAME}" sh -c "DBUS_SESSION_BUS_ADDRESS='unix:path=/run/user/1000/bus' systemctl --user enable code-server"
 lxc stop oob-code-server
 lxc file push -p ./codeserver/config.yaml oob-code-server/home/nullpo/.config/code-server/
@@ -117,7 +128,7 @@ lxc start oob-code-server
 
 info "Querying the IP address of the container..."
 sleep 3
-sed -i "s;LXC_IP^=.*;LXC_IP=$(lxc ls oob-code-server -c4 --format=csv | grep -o 'LXC_IP=[0-9.]*');" ./helper_containers/.env
+sed -i "s;^LXC_IP=.*;LXC_IP=$(lxc ls oob-code-server -c4 --format=csv | grep -o '^[0-9.]*');" ./helper_containers/.env
 
 echo_stage "== Making Docker containers up =="
 
@@ -133,7 +144,7 @@ echo_stage "== Finish =="
 
 info "Done!"
 info "* PLEASE cd to helper_containers and run 'docker-compose logs' to check whether containers are working fine. *"
-info 'If they have no errors, you should be able to access to https://"your host name".'
+info "If they have no errors, you should be able to access to https://$(grep -o 'CODER_HOST=.*' .env | cut -c12-)"
 info
 info "If you want to enter the container of code-server from your shell, run 'lxc exec oob-coder-server -- /bin/bash -i'"
 

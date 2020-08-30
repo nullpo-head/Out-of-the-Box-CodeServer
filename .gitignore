@@ -1,1 +1,5 @@
 .env
+heartbeats_files_placeholder/
+helper_containers/emails
+
+!heartbeats_files_placeholder/README
