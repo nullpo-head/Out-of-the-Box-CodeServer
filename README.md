@@ -62,8 +62,6 @@ $ git clone https://github.com/nullpo-head/Out-of-Box-CodeServer-Environment.git
 
 4. **(Optional)** Automatic Deallocation of Your VM (Azure is only supporeted)
 
-   Azure VM is only supported right now because I'm an Azure user. Any PRs to support other clouds are welcome.
-
    If you enable automatic deallocation of your VM,
    rewrite `HEARTBEATS_ACTION` so that it corresponds to your VM.
 
@@ -71,9 +69,12 @@ $ git clone https://github.com/nullpo-head/Out-of-Box-CodeServer-Environment.git
    HEARTBEATS_ACTION="az vm deallocate --subscription 'Put Your Subscription Here' -g 'Put Your Resource Group Name Here' -n 'Put Your VM Name Here"
    ```
 
-   You can set `HEARTBEATS_TIMEOUT` to determine how many minutes of idle time the VM will deallocate after. The default minutes is 15.
+   You can set `HEARTBEATS_TIMEOUT` to determine how many minutes of idle time the VM will deallocate after. The default minutes is 15.  
+   By this configuration, your Azure VM is deallocated after Code-Server is idle for 15 minutes and there is no session of ssh and Bash for 15 minutes.
 
-### 3. Init OOTB Code-Server
+   Azure VM is only supported right now because the author is an Azure user. Any PRs to support other clouds are welcome.
+
+### 3. Initialize OOTB Code-Server
 
 **First**, please make sure that `80` and `443` ports are not used by other web servers.  
 Installtion will fail if they are not available. If it fails, re-run `install.sh` after making those ports available.
