@@ -34,19 +34,27 @@ info () {
     echo $flags "\e[2m=> \e[m$*" >&2
 }
 
+check_install() {
+    if ! which $1; then
+        error "$1 is not found. Please install $1"
+        exit 1
+    fi
+
+    info $1 is installed.
+}
+
 if [[ $(whoami) == root ]]; then
     error "Please run this script by a regular user, not by sudo or root" >&2
     exit 1
 fi
 
-echo_stage "== Checking if lxd is installed =="
+cd "$(dirname "$(realpath "$0")")"
 
-if ! which lxd; then
-    error "lxd is not found. Please install lxd"
-    exit 1
-fi
+echo_stage "== Checking if lxd and docker are installed =="
 
-info lxd is installed.
+check_install lxd
+check_install docker
+check_install docker-compose
 
 echo_stage "== Checking .env =="
 
@@ -57,17 +65,29 @@ else
     info ".env file is found"
 fi
 
-echo_stage "== Initializing a LXC container for Code-Server =="
+echo_stage "== Checking existing LXC containers for Code-Server =="
 
 if [ -n "$(lxc ls oob-code-server --format=csv)" ]; then
   if prompt_yn "A LXC container named 'oob-code-server' already exists. Do you want to delete it? [y/N]" n; then
     lxc stop oob-code-server || true
     lxc delete oob-code-server
+    info stopped and deleted the container.
   else
     error "Aborting"
     exit 0
   fi
 fi
+
+echo_stage "== Filling some variables in .env =="
+
+sed -i "s;^HEARTBEATS_FOLDER=.*;HEARTBEATS_FOLDER=$(realpath ./heartbeats);" ./helper_containers/.env
+touch ./helper_containers/emails
+sed -i "s;^ALLOWED_EMAILS_LIST=.*;ALLOWED_EMAILS_LIST=$(realpath ./helper_containers/emails);" ./helper_containers/.env
+sed -i "s;^OAUTH2_PROXY_COOKIE_SECRET=.*;OAUTH2_PROXY_COOKIE_SECRET=$(head -c 32 /dev/urandom | sha512sum | cut -c1-32);" ./helper_containers/.env
+
+info done.
+
+echo_stage "== Initializing a LXC container for Code-Server =="
 
 info -n "Please input your user name in the Code-Server container [ubuntu]: "
 read USERNAME
@@ -97,8 +117,7 @@ lxc start oob-code-server
 
 info "Querying the IP address of the container..."
 sleep 3
-sed -i '/^LXC_IP=/d' helper_containers/.env || true
-echo "LXC_IP=$(lxc ls oob-code-server -c4 --format=csv)" | grep -o 'LXC_IP=[0-9.]*' >> helper_containers/.env
+sed -i "s;LXC_IP^=.*;LXC_IP=$(lxc ls oob-code-server -c4 --format=csv | grep -o 'LXC_IP=[0-9.]*');" ./helper_containers/.env
 
 echo_stage "== Making Docker containers up =="
 
@@ -114,8 +133,8 @@ echo_stage "== Finish =="
 
 info "Done!"
 info "* PLEASE cd to helper_containers and run 'docker-compose logs' to check whether containers are working fine. *"
-info 'If they have no errors, you should be access to https://"your host name".'
-info 
+info 'If they have no errors, you should be able to access to https://"your host name".'
+info
 info "If you want to enter the container of code-server from your shell, run 'lxc exec oob-coder-server -- /bin/bash -i'"
 
 echo_stage "== Follow-up =="
