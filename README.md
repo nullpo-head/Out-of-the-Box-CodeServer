@@ -50,9 +50,11 @@ $ git clone https://github.com/nullpo-head/Out-of-Box-CodeServer-Environment.git
 
 3. GitHub Authorization
    
-   Create a new project at https://github.com/settings/developers.
+   Create a new OAuth App at https://github.com/settings/developers.  
+   "Homepage URL" is the domain you host your code-server. Let's suppose it's `https://yourdomain.com` here. Then, "Authorization callback URL" is `https://yourdomain.com/oauth2/callback`. Please note that you use `https://` because OOTB Code-Server enables https.
+   If you want to know more about this settings, please refer to [the doc of OAuth2 Proxy](https://oauth2-proxy.github.io/oauth2-proxy/)
 
-   Please fill in `OAUTH2_PROXY_CLIENT_ID` and `OAUTH2_PROXY_CLIENT_SECRET` in `.env` according to the project you created.
+   Please fill in `OAUTH2_PROXY_CLIENT_ID` and `OAUTH2_PROXY_CLIENT_SECRET` in `.env` according to the app you created.
 
    Put your email address in `emails` file. Only the email address listed here are allowed to login to your Code-Server.
    ```bash
@@ -70,8 +72,6 @@ $ git clone https://github.com/nullpo-head/Out-of-Box-CodeServer-Environment.git
 
    You can set `HEARTBEATS_TIMEOUT` to determine how many minutes of idle time the VM will deallocate after. The default minutes is 15.  
    By this configuration, your Azure VM is deallocated after Code-Server is idle for 15 minutes and there is no session of ssh and Bash for 15 minutes.
-   Please note that Code-Server v3.4.1 has a bug that it refreshes its heartbeat even when there is no active conncetions. It will be fixed in v3.5.
-   Because of it, automatic deallocation will not work as expected right now.
 
    Azure VM is only supported right now because the author is an Azure user. Any PRs to support other clouds are welcome.
 
