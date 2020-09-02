@@ -1,6 +1,6 @@
 # OOTB Code-Server
 
-OOTB Code-Server is an out-of-the-box [Code-Server](https://github.com/cdr/code-server) environment.   
+OOTB Code-Server is an out-of-the-box [Code-Server](https://github.com/cdr/code-server) environment.
 
 [Code-Server](https://github.com/cdr/code-server) is an OSS product developed by [Coder technologies](https://coder.com/) that allows you to run [VS Code](https://github.com/Microsoft/vscode) on any machine and to access it in the browser.  
 However, to install Code-Server on a server, you have to set up an Https proxy server, an authentication mechanism for security, automatic shutdown if the server is hosted in the cloud, and much more.  
@@ -15,6 +15,9 @@ OOTB Code-Server is equipped with
 
 OOTB Code-Server consists of Docker-Compose containers for immutable components such as Https proxy and GitHub auth proxy,
 and a LXC container for mutable Code-Server environment.
+
+<img src="images/screenshot.png" width="1366">
+<img src="images/ootb-code-server-architecture.png" width="518">
 
 ## Getting Started
 
@@ -38,18 +41,20 @@ $ git clone https://github.com/nullpo-head/Out-of-Box-CodeServer-Environment.git
    $ cd ootb-code-server
    $ cp ./helper_containers/.env.example ./helper_containers/.env
    ```
+
    Pleaes edit `.env` as follows
 
 2. DNS Name
 
    Rewrite `CODER_HOST` to your server's DNS name. Let's Encrypt will issue a certificate for this domain.  
    For example, if you use an Azure VM, it has a name like this
+
    ```
    CODER_HOST=my-ootb-codeserver.japaneast.cloudapp.azure.com
    ```
 
 3. GitHub Authorization
-   
+
    Create a new OAuth App at https://github.com/settings/developers.  
    "Homepage URL" is the domain you host your code-server. Let's suppose it's `https://yourdomain.com` here. Then, "Authorization callback URL" is `https://yourdomain.com/oauth2/callback`. Please note that you use `https://` because OOTB Code-Server enables https.
    If you want to know more about this settings, please refer to [the doc of OAuth2 Proxy](https://oauth2-proxy.github.io/oauth2-proxy/)
@@ -57,6 +62,7 @@ $ git clone https://github.com/nullpo-head/Out-of-Box-CodeServer-Environment.git
    Please fill in `OAUTH2_PROXY_CLIENT_ID` and `OAUTH2_PROXY_CLIENT_SECRET` in `.env` according to the app you created.
 
    Put your email address in `emails` file. Only the email address listed here are allowed to login to your Code-Server.
+
    ```bash
    $ echo 'your.email.address@example.com' > ~/ootb-code-server/emails
    ```
@@ -81,19 +87,21 @@ $ git clone https://github.com/nullpo-head/Out-of-Box-CodeServer-Environment.git
 Installtion will fail if they are not available. If it fails, re-run `install.sh` after making those ports available.
 
 Run `install.sh`, following the instruction it prompts.
+
 ```bash
 $ ./install.sh
 ```
 
 After that, you can access your Code-Server at `https://your-host-name`.
 
-Containers of OOTB Code-Server will automatically launch when your server starts.  
+Containers of OOTB Code-Server will automatically launch when your server starts.
 
 ## Stop / Monitor Container statuses
 
 OOTB Code-Server consists of Docker Compose and LXD. So, you can controll containers by `docker-compose` and `lxc`.
 
 You can stop containers
+
 ```bash
 $ cd ~/ootb-code-server/helper_containers
 $ sudo docker-compose stop  # or `down` to delete containers
@@ -101,6 +109,7 @@ $ lxc stop ootb-code-server
 ```
 
 You can monitor containers by
+
 ```bash
 $ cd ~/ootb-code-server/helper_containers
 $ sudo docker-compose ps
@@ -108,7 +117,9 @@ CONTAINER ID        IMAGE                               COMMAND               CR
 7c9806549c66        steveltn/https-portal:1             "/init"               2 hours ago         Up 2 hours          0.0.0.0:80->80/tcp, 0.0.0.0:443->443/tcp   helper_containers_https-portal_1
 6f0ce90981c9        quay.io/oauth2-proxy/oauth2-proxy   "/bin/oauth2-proxy"   2 hours ago         Up 2 hours                                                     helper_containers_oauth2-proxy_1
 ```
-and 
+
+and
+
 ```bash
 $ lxc ls
 +------------------+---------+---------------------+--------+------------+-----------+
