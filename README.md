@@ -64,7 +64,7 @@ $ git clone https://github.com/nullpo-head/Out-of-Box-CodeServer-Environment.git
    Put your email address in `emails` file. Only the email address listed here are allowed to login to your Code-Server.
 
    ```bash
-   $ echo 'your.email.address@example.com' > ~/ootb-code-server/emails
+   $ echo 'your.email.address@example.com' > ~/ootb-code-server/helper_containers/emails
    ```
 
 4. **(Optional)** Automatic Deallocation of Your VM (Azure is only supporeted)
