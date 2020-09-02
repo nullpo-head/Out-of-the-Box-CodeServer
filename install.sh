@@ -97,6 +97,7 @@ UID_="$(id -u)"
 GID="$(id -g)"
 
 if prompt_yn "Do you run 'lxd init'? Run it if this is your first time to use LXD. [Y/n]" y; then
+    info "Launch 'lxd init'... The default options are suitable for most cases."
     lxd init
 fi
 
