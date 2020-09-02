@@ -96,29 +96,41 @@ After that, you can access your Code-Server at `https://your-host-name`.
 
 Containers of OOTB Code-Server will automatically launch when your server starts.
 
-## Stop / Monitor Container statuses
+## Stop / Start / Monitor Containers
 
 OOTB Code-Server consists of Docker Compose and LXD. So, you can controll containers by `docker-compose` and `lxc`.
 
-You can stop containers
+### Stop
 
 ```bash
+$ lxc stop ootb-code-server
 $ cd ~/ootb-code-server/helper_containers
 $ sudo docker-compose stop  # or `down` to delete containers
-$ lxc stop ootb-code-server
 ```
 
-You can monitor containers by
+### Start
+
+You can start them again by
 
 ```bash
+$ lxc start ootb-code-server
 $ cd ~/ootb-code-server/helper_containers
-$ sudo docker-compose ps
-CONTAINER ID        IMAGE                               COMMAND               CREATED             STATUS              PORTS                                      NAMES
-7c9806549c66        steveltn/https-portal:1             "/init"               2 hours ago         Up 2 hours          0.0.0.0:80->80/tcp, 0.0.0.0:443->443/tcp   helper_containers_https-portal_1
-6f0ce90981c9        quay.io/oauth2-proxy/oauth2-proxy   "/bin/oauth2-proxy"   2 hours ago         Up 2 hours                                                     helper_containers_oauth2-proxy_1
 ```
 
-and
+1. If you don't enable automatic VM deallocation,
+   ```bash
+   $ sudo docker-compose up -d https-portal oauth2-proxy
+   ```
+2. If you enable automatic VM deallocation,
+   ```bash
+   $ sudo docker-compose up -d
+   ```
+
+They will launch automatically when your server launces, as long as they are running when you shutdown your server.
+
+### Monitor
+
+You can monitor containers by
 
 ```bash
 $ lxc ls
@@ -127,4 +139,14 @@ $ lxc ls
 +------------------+---------+---------------------+--------+------------+-----------+
 | ootb-code-server | RUNNING | 10.238.18.27 (eth0) |        | PERSISTENT | 0         |
 +------------------+---------+---------------------+--------+------------+-----------+
+```
+
+and
+
+```bash
+$ cd ~/ootb-code-server/helper_containers
+$ sudo docker-compose ps
+CONTAINER ID        IMAGE                               COMMAND               CREATED             STATUS              PORTS                                      NAMES
+7c9806549c66        steveltn/https-portal:1             "/init"               2 hours ago         Up 2 hours          0.0.0.0:80->80/tcp, 0.0.0.0:443->443/tcp   helper_containers_https-portal_1
+6f0ce90981c9        quay.io/oauth2-proxy/oauth2-proxy   "/bin/oauth2-proxy"   2 hours ago         Up 2 hours                                                     helper_containers_oauth2-proxy_1
 ```

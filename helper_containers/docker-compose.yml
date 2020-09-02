@@ -12,7 +12,7 @@ services:
       WEBSOCKET: "true"
       DOMAINS: "${CODER_HOST:?Please set CODER_HOST} -> http://oauth2-proxy:8080"
       STAGE: ${HTTPS_PORTAL_STAGE:?Please set HTTPS_PORTAL_STAGE} # Don't set to 'production' this until you test everything works
-    restart: always
+    restart: unless-stopped
 
   oauth2-proxy:
     image: quay.io/oauth2-proxy/oauth2-proxy
@@ -25,7 +25,7 @@ services:
       OAUTH2_PROXY_UPSTREAMS: "http://${LXC_IP:?LXC_IP should be set. Unexpected error.}:8080/"
     volumes:
       - ${ALLOWED_EMAILS_LIST:?Please set ALLOWED_EMAILS_LIST}:/config/emails
-    restart: always
+    restart: unless-stopped
 
   heartbeats-watcher:
     build: ./heartbeats_watcher
