@@ -10,8 +10,8 @@ services:
       - .env
     environment:
       WEBSOCKET: "true"
-      DOMAINS: "${CODER_HOST:?Please set CODER_HOST} -> http://oauth2-proxy:8080"
-      STAGE: ${HTTPS_PORTAL_STAGE:?Please set HTTPS_PORTAL_STAGE} # Don't set to 'production' this until you test everything works
+      DOMAINS: "${CODER_HOST} -> http://oauth2-proxy:8080"
+      STAGE: ${HTTPS_PORTAL_STAGE} # Don't set to 'production' this until you test everything works
     restart: unless-stopped
 
   oauth2-proxy:
@@ -22,9 +22,9 @@ services:
       OAUTH2_PROXY_HTTP_ADDRESS: 0.0.0.0:8080
       OAUTH2_PROXY_PROVIDER: github
       OAUTH2_PROXY_AUTHENTICATED_EMAILS_FILE: /config/emails
-      OAUTH2_PROXY_UPSTREAMS: "http://${LXC_IP:?LXC_IP should be set. Unexpected error.}:8080/"
+      OAUTH2_PROXY_UPSTREAMS: "http://${LXC_IP}:8080/"
     volumes:
-      - ${ALLOWED_EMAILS_LIST:?Please set ALLOWED_EMAILS_LIST}:/config/emails
+      - ${ALLOWED_EMAILS_LIST}:/config/emails
     restart: unless-stopped
 
   heartbeats-watcher:
@@ -32,9 +32,9 @@ services:
     container_name: heartbeats_watcher
     env_file:
       - .env
-    command: -t "${HEARTBEATS_TIMEOUT:?Please set HEARTBEATS_TIMEOUT}" -a "${HEARTBEATS_ACTION:?Please set HEARTBEATS_ACTION}" -e "${HEARTBEATS_ACTION:?Please set HEARTBEATS_ACTION}" /app/heartbeats/heartbeat /app/heartbeats/sshbash_heartbeat
+    command: -t "${HEARTBEATS_TIMEOUT}" -a "${HEARTBEATS_ACTION}" -e "${HEARTBEATS_ACTION}" /app/heartbeats/heartbeat /app/heartbeats/sshbash_heartbeat
     volumes:
-      - ${HEARTBEATS_FOLDER:?Please set HEARTBEATS_FOLDER}:/app/heartbeats
+      - ${HEARTBEATS_FOLDER}:/app/heartbeats
     restart: unless-stopped
 
   sshbash-heartbeat:
@@ -44,6 +44,6 @@ services:
       - .env
     command: /app/heartbeats/sshbash_heartbeat
     volumes:
-      - ${HEARTBEATS_FOLDER:?Please set HEARTBEATS_FOLDER}:/app/heartbeats
+      - ${HEARTBEATS_FOLDER}:/app/heartbeats
     pid: "host"
     restart: unless-stopped
