@@ -129,7 +129,11 @@ lxc start ootb-code-server
 
 info "Querying the IP address of the container..."
 sleep 3
-sed -i "s;^LXC_IP=.*;LXC_IP=$(lxc ls ootb-code-server -c4 --format=csv | grep -o '^[0-9.]*');" ./helper_containers/.env
+while ! ( lxc ls ootb-code-server -c4 --format=csv | grep -oP '^[0-9.]+' > /dev/null ); do
+    sleep 1
+done
+info IP: $( lxc ls ootb-code-server -c4 --format=csv | grep -oP '^[0-9.]+' )
+sed -i "s;^LXC_IP=.*;LXC_IP=$(lxc ls ootb-code-server -c4 --format=csv | grep -oP '^[0-9.]+');" ./helper_containers/.env
 
 echo_stage "== Making Docker containers up =="
 
