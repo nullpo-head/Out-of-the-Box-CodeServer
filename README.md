@@ -80,6 +80,8 @@ $ git clone https://github.com/nullpo-head/Out-of-Box-CodeServer-Environment.git
    By this configuration, your Azure VM is deallocated after Code-Server is idle for 15 minutes and there is no session of ssh and Bash for 15 minutes.
 
    Azure VM is only supported right now because the author is an Azure user. Any PRs to support other clouds are welcome.
+   
+   __NOTE__: Automatic deallocation doesn't work if you connect to Code-Server from iPad. Please see [the issue of Code-Server](https://github.com/cdr/code-server/issues/2061).
 
 ### 3. Initialize OOTB Code-Server
 
